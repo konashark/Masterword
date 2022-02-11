@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    Click the button then choose a file to see its contents displayed below.
+    <button onclick="openFile()">Open a file</button>
+    <input id="inp" type='file' style="visibility:hidden;" onchange="readFile(event)" />
+    <pre id="contents"></pre>
+
+    <script>
+        function openFile() {
+            document.getElementById('inp').click();
+        }
+
+        function parseWords(data) {
+            words = data.match(/[^\r\n]+/g);
+            filtered = [];
+
+            console.log(">>Found "+words.length+" words.");
+
+            // filter words that are too short, long, or apostrophied
+            for (var i = 0; i < words.length; i++) {
+                var word = words[i];
+                if (word.length == 5) {
+                    if (word.indexOf("'") < 0) {
+                        filtered.push(word);
+                        document.getElementById('contents').innerHTML += '\r' + word;
+                    }
+                }
+            }
+
+            console.log(">>Found "+filtered.length+" filtered words.");
+            var j = JSON.stringify(filtered);
+            //console.log(j);
+
+        }
+
+        function readFile(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = e.target.result;
+//                document.getElementById('contents').innerHTML = data;
+                console.log("Data length " + data.length);
+                parseWords(data);
+            };
+            reader.readAsText(file)
+        }
+    </script>
+</body>
+</html>
